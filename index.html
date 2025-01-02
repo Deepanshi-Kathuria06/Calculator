@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        * {
+            background-color: black;
+            padding: 0;
+            margin: 0;
+        }
+
+        .outer-div {
+            height: 700px;
+            width: 900px;
+            margin: 70px 250px;
+        }
+
+        .h-1 {
+            color: white;
+            font-style: italic;
+            font-weight: 200px;
+            text-align: center;
+            padding-left: 70px;
+        }
+
+        .score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 80%;
+            margin: 20px auto;
+            color: white;
+        }
+
+        .playerScore, .computerScore {
+            text-align: center;
+            width: 150px;
+            /* border: 2px solid white; */
+            padding: 10px;
+            background-color: black;
+        }
+
+        #player-choice, #computer-choice {
+            margin-top: 10px;
+        }
+
+        img {
+            display: block;
+            margin: 10px auto;
+            border-radius: 50%;
+            height: 100px;
+        }
+
+        .move {
+            color: white;
+            margin-top: 30px;
+            text-align: center;
+            position: relative;
+            background: none;
+            font-size: 18px;
+        }
+
+        .btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            position: absolute;
+        }
+
+        .btn img {
+            height: 150px;
+        }
+
+        #btn-rock {
+            left: 25%;
+            bottom: 10%;
+        }
+
+        #btn-paper {
+            left: 45%;
+            bottom: 10%;
+        }
+
+        #btn-scissors {
+            left: 65%;
+            bottom: 10%;
+        }
+
+        .winner {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="outer-div">
+        <h1 class="h-1">Rock Paper Scissors</h1>
+   
+
+    <div class="score">
+        <div class="playerScore">
+            <h2>Player</h2>
+            <p class="p-count count">0</p>
+            <div id="player-choice">
+                <img id="player-choice-img" src="" alt="Player's choice" style="display: none;">
+            </div>
+        </div>
+        <div class="computerScore">
+            <h2>Computer</h2>
+            <p class="c-count count">0</p>
+            <div id="computer-choice">
+                <img id="computer-choice-img" src="" alt="Computer's choice" style="display: none;">
+            </div>
+        </div>
+    </div>
+
+    <div><h1 class="move">Choose Your Move</h1></div>
+
+    <button id="btn-rock" class="btn" onclick="playGame('rock')">
+        <img src="image1.png" alt="Rock">
+    </button>
+    <button id="btn-paper" class="btn" onclick="playGame('paper')">
+        <img src="image2.png" alt="Paper">
+    </button>
+    <button id="btn-scissors" class="btn" onclick="playGame('scissors')">
+        <img src="image3.png" alt="Scissors">
+    </button>
+
+    <div class="winner" id="winner-message"></div>
+</div>
+    <script>
+        const moves = {
+            rock: "image1.png",
+            paper: "image2.png",
+            scissors: "image3.png"
+        };
+
+        let playerScore = 0;
+        let computerScore = 0;
+        let totalMoves = 0;
+        const maxMoves = 5;
+
+        function getComputerMove() {
+            const moveNames = Object.keys(moves);
+            return moveNames[Math.floor(Math.random() * moveNames.length)];
+        }
+
+        function playGame(playerMove) {
+            if (totalMoves >= maxMoves) {
+                return;
+            }
+
+            const computerMove = getComputerMove();
+
+            // Update Player's choice
+            const playerImg = document.getElementById('player-choice-img');
+            playerImg.src = moves[playerMove];
+            playerImg.style.display = "block";
+
+            // Update Computer's choice
+            const computerImg = document.getElementById('computer-choice-img');
+            computerImg.src = moves[computerMove];
+            computerImg.style.display = "block";
+
+            // Disable buttons during timeout
+            document.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
+
+            setTimeout(() => {
+                // Calculate winner of the round
+                if (
+                    (playerMove === "rock" && computerMove === "scissors") ||
+                    (playerMove === "paper" && computerMove === "rock") ||
+                    (playerMove === "scissors" && computerMove === "paper")
+                ) {
+                    playerScore++;
+                    document.querySelector('.p-count').textContent = playerScore;
+                } else if (playerMove !== computerMove) {
+                    computerScore++;
+                    document.querySelector('.c-count').textContent = computerScore;
+                }
+
+                totalMoves++;
+
+                // Check if game is over
+                if (totalMoves === maxMoves) {
+                    declareWinner();
+                } else {
+                    document.querySelectorAll('.btn').forEach(btn => btn.disabled = false);
+                }
+            }, 1000); // 1-second delay to display winner
+        }
+
+        function declareWinner() {
+            const winnerMessage = document.getElementById('winner-message');
+
+            if (playerScore > computerScore) {
+                winnerMessage.textContent = "Player Wins the Game!";
+            } else if (playerScore < computerScore) {
+                winnerMessage.textContent = "Computer Wins the Game!";
+            } else {
+                winnerMessage.textContent = "It's a Tie!";
+            }
+
+            // Disable buttons after the game ends
+            document.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
+        }
+    </script>
+</body>
+</html>
