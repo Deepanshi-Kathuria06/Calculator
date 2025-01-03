@@ -37,7 +37,6 @@
         .playerScore, .computerScore {
             text-align: center;
             width: 150px;
-            /* border: 2px solid white; */
             padding: 10px;
             background-color: black;
         }
@@ -94,44 +93,94 @@
             margin-top: 20px;
             font-size: 20px;
         }
+
+        #popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(0, 0, 0);
+    color: black;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    z-index: 10; /* Ensure it appears on top */
+    border: 2px solid white;
+}
+
+#popup h2 {
+    color: rgb(242, 236, 236); /* Make sure the text is visible */
+}
+
+#popup button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 2px solid white;
+}
+
+#popup button:hover {
+    background-color: grey;
+}
+
+
+        #move-counter {
+            color: white;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
     <div class="outer-div">
         <h1 class="h-1">Rock Paper Scissors</h1>
-   
 
-    <div class="score">
-        <div class="playerScore">
-            <h2>Player</h2>
-            <p class="p-count count">0</p>
-            <div id="player-choice">
-                <img id="player-choice-img" src="" alt="Player's choice" style="display: none;">
+        <div class="score">
+            <div class="playerScore">
+                <h2>Player</h2>
+                <p class="p-count count">0</p>
+                <div id="player-choice">
+                    <img id="player-choice-img" src="" alt="Player's choice" style="display: none;">
+                </div>
+            </div>
+            <div class="computerScore">
+                <h2>Computer</h2>
+                <p class="c-count count">0</p>
+                <div id="computer-choice">
+                    <img id="computer-choice-img" src="" alt="Computer's choice" style="display: none;">
+                </div>
             </div>
         </div>
-        <div class="computerScore">
-            <h2>Computer</h2>
-            <p class="c-count count">0</p>
-            <div id="computer-choice">
-                <img id="computer-choice-img" src="" alt="Computer's choice" style="display: none;">
-            </div>
-        </div>
+
+        <div><h1 class="move">Choose Your Move</h1></div>
+
+        <div id="move-counter">Moves Left: 5</div>
+
+        <button id="btn-rock" class="btn" onclick="playGame('rock')">
+            <img src="image1.png" alt="Rock">
+        </button>
+        <button id="btn-paper" class="btn" onclick="playGame('paper')">
+            <img src="image2.png" alt="Paper">
+        </button>
+        <button id="btn-scissors" class="btn" onclick="playGame('scissors')">
+            <img src="image3.png" alt="Scissors">
+        </button>
+
+        <div class="winner" id="winner-message"></div>
     </div>
 
-    <div><h1 class="move">Choose Your Move</h1></div>
+    <div id="popup">
+        <h2 id="popup-message"></h2>
+        <button onclick="resetGame()">Play Again</button>
+    </div>
 
-    <button id="btn-rock" class="btn" onclick="playGame('rock')">
-        <img src="image1.png" alt="Rock">
-    </button>
-    <button id="btn-paper" class="btn" onclick="playGame('paper')">
-        <img src="image2.png" alt="Paper">
-    </button>
-    <button id="btn-scissors" class="btn" onclick="playGame('scissors')">
-        <img src="image3.png" alt="Scissors">
-    </button>
-
-    <div class="winner" id="winner-message"></div>
-</div>
     <script>
         const moves = {
             rock: "image1.png",
@@ -147,6 +196,11 @@
         function getComputerMove() {
             const moveNames = Object.keys(moves);
             return moveNames[Math.floor(Math.random() * moveNames.length)];
+        }
+
+        function updateMoveCounter() {
+            const movesLeft = maxMoves - totalMoves;
+            document.getElementById('move-counter').textContent = `Moves Left: ${movesLeft}`;
         }
 
         function playGame(playerMove) {
@@ -184,6 +238,7 @@
                 }
 
                 totalMoves++;
+                updateMoveCounter();
 
                 // Check if game is over
                 if (totalMoves === maxMoves) {
@@ -195,7 +250,7 @@
         }
 
         function declareWinner() {
-            const winnerMessage = document.getElementById('winner-message');
+            const winnerMessage = document.getElementById('popup-message');
 
             if (playerScore > computerScore) {
                 winnerMessage.textContent = "Player Wins the Game!";
@@ -205,9 +260,28 @@
                 winnerMessage.textContent = "It's a Tie!";
             }
 
+            // Show popup
+            document.getElementById('popup').style.display = "block";
+
             // Disable buttons after the game ends
             document.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
         }
+
+        function resetGame() {
+            playerScore = 0;
+            computerScore = 0;
+            totalMoves = 0;
+
+            document.querySelector('.p-count').textContent = "0";
+            document.querySelector('.c-count').textContent = "0";
+            document.getElementById('player-choice-img').style.display = "none";
+            document.getElementById('computer-choice-img').style.display = "none";
+            document.getElementById('popup').style.display = "none";
+            document.querySelectorAll('.btn').forEach(btn => btn.disabled = false);
+            updateMoveCounter();
+        }
+
+        updateMoveCounter();
     </script>
 </body>
 </html>
